@@ -1,7 +1,6 @@
-const submit = document.getElementById('btn-submit');
-const form = document.getElementById('login-form');
-
 document.addEventListener('DOMContentLoaded', function() {
+    const submit = document.getElementById('btn-submit');
+    const form = document.getElementById('login-form');
 
     submit.addEventListener('click', function(event) {
         event.preventDefault();
@@ -23,8 +22,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (response && response.status >= 400 && response.status <= 499) {
                     showModal('Acesso não autorizado');
                 } else if (response && response.status >= 200 && response.status <= 299) {
-                    // Armazena o token no cookie do navegador
-                    document.cookie = `authToken=${response.token}; path=/;`;
+                    response.json().then(data => {
+                        // Armazena o token JWT no localStorage
+                        localStorage.setItem('authToken', data.token);
+                        showModal('Login bem-sucedido!');
+                        // Redirecione para a próxima página ou faça algo com o token
+                    });
                 } else if (response && response.status >= 500 && response.status <= 599) {
                     showModal('Erro no servidor: ' + response.status);
                 } else {
@@ -32,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         } else {
-            showModal("Erro");
+            showModal("Preencha todos os campos.");
         }
     });
 });
@@ -48,62 +51,25 @@ function jsonFile(username, password) {
     return JSON.stringify(formData);
 }
 
-function showModal(message) {
-    const modal = document.getElementById('custom-alert');
-    const progress = modal.querySelector('.progress');
-    const textModal = document.getElementById('alert-message');
-
-    textModal.textContent = message;
-    modal.classList.add('show');
-
-    // Tempo total para a barra de progresso (em milissegundos)
-    const totalTime = 5000;
-
-    // Atualiza a largura da barra de progresso a cada 100ms
-    const interval = 100;
-    let width = 100;
-    const decrement = (interval / totalTime) * 100;
-
-    const progressInterval = setInterval(() => {
-        width -= decrement;
-        if (width <= 0) {
-            width = 0;
-            clearInterval(progressInterval);
-            // Remove a classe 'show' após o tempo total
-            modal.classList.remove('show');
-        }
-        progress.style.width = width + '%';
-    }, interval);
-
-    // Remove a classe 'show' após o tempo total
-    setTimeout(() => {
-        if (modal.classList.contains('show')) {
-            modal.classList.remove('show');
-        }
-    }, totalTime);
+function makeRequest(url, data, method) {
+    return fetch(url, {
+        method: method,
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: data
+    });
 }
 
-async function makeRequest(url, json, method) {
-    try {
-        const response = await axios({
-            method: method,
-            url: url,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            data: json // Envia os dados JSON no corpo da requisição
-        });
+function showModal(message) {
+    const modal = document.getElementById('custom-alert');
+    const alertMessage = document.getElementById('alert-message');
+    
+    alertMessage.textContent = message;
+    modal.style.display = 'flex'; // Mostrar modal
 
-        return response; // Retorna o objeto de resposta completo
-    } catch (error) {
-        if (error.response) {
-            return error.response; // Retorna o objeto de resposta do erro
-        } else if (error.request) {
-            showModal('Erro na conexão ou no servidor.');
-            return null; // Erro de rede
-        } else {
-            showModal('Erro:', error.message);
-            return null; // Erro genérico
-        }
-    }
+    // Ocultar o modal após 5 segundos
+    setTimeout(() => {
+        modal.style.display = 'none';
+    }, 2000);
 }
