@@ -71,5 +71,5 @@ function showModal(message) {
     // Ocultar o modal após 5 segundos
     setTimeout(() => {
         modal.style.display = 'none';
-    }, 2000);
+    }, 5000);
 }
