@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         // Armazena o token JWT no localStorage
                         localStorage.setItem('authToken', data.token);
                         showModal('Login bem-sucedido!');
+                        console.log("login bem sucedido!")
                         // Redirecione para a próxima página ou faça algo com o token
                     });
                 } else if (response && response.status >= 500 && response.status <= 599) {
