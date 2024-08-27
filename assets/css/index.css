@@ -134,6 +134,7 @@ input:focus + label + .toggle-password,
 }
 
 .modal {
+    display: flex;
     background-color: white;
     padding: 20px;
     border-radius: 5px;
@@ -148,7 +149,7 @@ input:focus + label + .toggle-password,
     transition: opacity 0.5s ease-in-out; /* Transição suave */
 }
 
-.modal.show {
+.show {
     opacity: 1; /* Torna visível */
 }
 

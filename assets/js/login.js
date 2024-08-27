@@ -64,14 +64,19 @@ function makeRequest(url, data, method) {
 }
 
 function showModal(message) {
+    console.log('Exibindo modal com a mensagem:', message);
     const modal = document.getElementById('custom-alert');
     const alertMessage = document.getElementById('alert-message');
     
-    alertMessage.textContent = message;
-    modal.style.display = 'flex'; // Mostrar modal
+    if (modal && alertMessage) {
+        alertMessage.textContent = message;
+        modal.classList.add('show'); // Adiciona a classe 'show' para mostrar o modal
 
-    // Ocultar o modal após 5 segundos
-    setTimeout(() => {
-        modal.style.display = 'none';
-    }, 5000);
+        // Ocultar o modal após 5 segundos
+        setTimeout(() => {
+            modal.classList.remove('show'); // Remove a classe 'show' para ocultar o modal
+        }, 5000);
+    } else {
+        console.error('Modal ou mensagem de alerta não encontrados.');
+    }
 }
